@@ -30,6 +30,8 @@
 
 ## Usage
 
+Check [linedump.com](https://linedump.com) for now - coming soon.
+
 ---
 
 ## Installation
@@ -41,7 +43,7 @@ Use with reverse-proxy and HTTPS!
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | `DOMAIN` | Domain name used in the application responses and examples | `linedump.com` | No |
-| `DESCRIPTION` | Application description displayed in the root endpoint | `(open source*) text-only CLI paste and share application.` | No |
+| `DESCRIPTION` | Application description displayed in the root endpoint | `CLI-only pastebin powered by linedump.com` | No |
 | `MAX_FILE_SIZE_MB` | Maximum file size limit in megabytes | `50` | No |
 | `RATE_LIMIT` | Rate limit for uploads (format: "requests/timeframe") | `50/hour` | No |
 | `URL_PATH_LENGTH` | Length of generated URL paths (number of characters) | `6` | No |
@@ -57,17 +59,17 @@ For security concerns or reports, please contact via `hello a t uphillsecurity d
 ## License
 
 **Apache License**
+
 Version 2.0, January 2004
+
 http://www.apache.org/licenses/
 
-[LICENSE FILE](/LICENSE)
-
-✅ Commercial use
-✅ Modification
-✅ Distribution
-✅ Patent use
-✅ Private use
-✅ Limitations
-❌Trademark use
-❌Liability
-❌Warranty
+- ✅ Commercial use
+- ✅ Modification
+- ✅ Distribution
+- ✅ Patent use
+- ✅ Private use
+- ✅ Limitations
+- ❌Trademark use
+- ❌Liability
+- ❌Warranty

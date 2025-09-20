@@ -15,7 +15,7 @@ import threading
 
 
 DOMAIN = os.getenv('DOMAIN', 'linedump.com')
-DESCRIPTION = os.getenv('DESCRIPTION', '(open source*) text-only CLI paste and share application.')
+DESCRIPTION = os.getenv('DESCRIPTION', 'CLI-only pastebin powered by linedump.com')
 MAX_FILE_SIZE_MB = int(os.getenv('MAX_FILE_SIZE_MB', '50'))
 RATE_LIMIT = os.getenv('RATE_LIMIT', '50/hour')
 URL_PATH_LENGTH = int(os.getenv('URL_PATH_LENGTH', '6'))
