@@ -201,12 +201,20 @@ curl -s https://{DOMAIN}/PASTE_THE_ID \
 ██ Adv Examples  ██
 
 
-    █ Multiple Commands
+    █ Multiple commands:
 
 {{ cmd() {{ printf "\\n# %s\\n" "$*"; "$@"; }}; \\
     cmd hostname; \\
     cmd ip -br a; \\
     }} 2>&1 | curl -X POST https://{DOMAIN} --data-binary @-
+
+    █ Continous command:
+
+(timeout --signal=INT --kill-after=5s 10s \\
+    ping google.com; \\
+    echo "--- Terminated ---") | \\
+    curl -X POST --data-binary @- https://linedump.com
+
 
 
 ████ Further Information ████
