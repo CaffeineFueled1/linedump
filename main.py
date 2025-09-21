@@ -212,7 +212,15 @@ curl -s https://{DOMAIN}/PASTE_THE_ID \
 ████ Further Information ████
 
 
-More information will follow. Work in Progress.
+Powered by linedump
+
+Source:
+    https://git.uphillsecurity.com/cf7/linedump
+
+License:
+    Apache-2.0
+    https://git.uphillsecurity.com/cf7/linedump/src/branch/main/LICENSE
+
 """
 
 if __name__ == "__main__":
