@@ -10,8 +10,6 @@ import os
 from pathlib import Path
 import hashlib
 from typing import Optional
-from collections import defaultdict
-import threading
 
 
 DOMAIN = os.getenv('DOMAIN', 'linedump.com')
@@ -30,10 +28,6 @@ UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024  # Convert MB to bytes
-MAX_FILES_PER_IP = 100
-
-file_counter = defaultdict(int)
-lock = threading.Lock()
 
 def generate_random_path(length: int = None) -> str:
     if length is None:
@@ -47,11 +41,6 @@ def get_client_ip(request: Request) -> str:
         return x_real_ip.strip()
     return request.client.host
 
-
-def check_file_limit(request: Request) -> bool:
-    client_ip = get_client_ip(request)
-    with lock:
-        return file_counter[client_ip] < MAX_FILES_PER_IP
 
 def validate_content(content: str) -> bool:
     """Basic validation for content size and encoding"""
@@ -73,9 +62,6 @@ def validate_content(content: str) -> bool:
 @limiter.limit(RATE_LIMIT)
 async def upload_text(request: Request):
     
-    if not check_file_limit(request):
-        raise HTTPException(status_code=429, detail="File limit exceeded")
-    
     body = await request.body()
     content = body.decode('utf-8', errors='ignore')
     
@@ -94,11 +80,7 @@ async def upload_text(request: Request):
     try:
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
-        
-        client_ip = get_client_ip(request)
-        with lock:
-            file_counter[client_ip] += 1
-        
+
         base_url = f"https://{request.headers.get('host', request.url.netloc)}"
         return f"{base_url}/{random_path}\n"
     
