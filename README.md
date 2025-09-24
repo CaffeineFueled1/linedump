@@ -67,12 +67,12 @@ Invoke-RestMethod -Uri "https://linedump.com/{path}"
 
     █ Upload text:
 
-echo 'Cheers'   | openssl enc -aes-256-cbc -pbkdf2 -base64 -pass pass:yourkey   | curl -X POST -d @- https://linedump.com/
+echo 'Cheers'   | openssl enc -aes-256-cbc -salt -pbkdf2 -base64 -pass pass:yourkey   | curl -X POST -d @- https://linedump.com/
 
 
     █ Upload file:
 
-openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < YOURFILE.txt   | curl -sS -X POST https://linedump.com --data-binary @-
+openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < file.txt   | curl -sS -X POST https://linedump.com --data-binary @-
 
 
     █ Upload command output:
@@ -82,7 +82,7 @@ ip -br a   | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64  
 
     █ Download:
 
-curl -s https://linedump.com/PASTE_THE_ID   | base64 -d   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
+curl -s https://linedump.com/{path}   | base64 -d   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
 
 
 

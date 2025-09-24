@@ -158,13 +158,13 @@ Invoke-RestMethod -Uri "https://{DOMAIN}/{{path}}"
     █ Upload text:
 
 echo 'Cheers' \
-  | openssl enc -aes-256-cbc -pbkdf2 -base64 -pass pass:yourkey \
+  | openssl enc -aes-256-cbc -pbkdf2 -salt -base64 -pass pass:yourkey \
   | curl -X POST -d @- https://{DOMAIN}/
 
 
     █ Upload file:
 
-openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < YOURFILE.txt \
+openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < file.txt \
   | curl -sS -X POST https://{DOMAIN} --data-binary @-
 
 
@@ -177,7 +177,7 @@ ip -br a \
 
     █ Download:
 
-curl -s https://{DOMAIN}/PASTE_THE_ID \
+curl -s https://{DOMAIN}/{path} \
   | base64 -d \
   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
 
