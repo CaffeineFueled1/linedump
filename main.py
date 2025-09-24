@@ -124,7 +124,7 @@ async def get_file(file_path: str):
 
 @app.get("/", response_class=PlainTextResponse)
 async def root():
-    return f"""C|_| {DOMAIN}
+    return f"""LD {DOMAIN}
 
  ████ General ████
 
@@ -179,16 +179,19 @@ echo 'Cheers' \
   | openssl enc -aes-256-cbc -pbkdf2 -base64 -pass pass:yourkey \
   | curl -X POST -d @- https://{DOMAIN}/
 
+
     █ Upload file:
 
 openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < YOURFILE.txt \
   | curl -sS -X POST https://{DOMAIN} --data-binary @-
+
 
     █ Upload command output:
 
 ip -br a \
   | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 \
   | curl -sS -X POST https://{DOMAIN} --data-binary @-
+
 
     █ Download:
 
@@ -208,12 +211,13 @@ curl -s https://{DOMAIN}/PASTE_THE_ID \
     cmd ip -br a; \\
     }} 2>&1 | curl -X POST https://{DOMAIN} --data-binary @-
 
+
     █ Continous command:
 
 (timeout --signal=INT --kill-after=5s 10s \\
-    ping google.com; \\
+    ping 127.1; \\
     echo "--- Terminated ---") | \\
-    curl -X POST --data-binary @- https://linedump.com
+    curl -X POST --data-binary @- https://{DOMAIN}
 
 
 
