@@ -30,7 +30,80 @@
 
 ## Usage
 
-Check [linedump.com](https://linedump.com) for now - coming soon.
+```text
+    █ Upload curl:
+
+curl -X POST -d "Cheers" https://linedump.com/                  # string
+curl -X POST https://linedump.com --data-binary @- < file.txt   # file
+ip -br a | curl -X POST https://linedump.com --data-binary @-   # command output
+
+
+    █ Upload wget:
+
+echo "Cheers" | wget --post-data=@- -O- https://linedump.com/   # string
+wget --post-file=file.txt -O- https://linedump.com/             # file
+ip -br a | wget --post-data=@- -O- https://linedump.com/        # command output
+
+
+    █ Upload Powershell:
+
+Invoke-RestMethod -Uri "https://linedump.com/" -Method Post -Body "Cheers"               # string
+Invoke-RestMethod -Uri "https://linedump.com/" -Method Post -InFile "file.txt"           # file
+ipconfig | Invoke-RestMethod -Uri "https://linedump.com/" -Method Post -Body { $_ }      # command output
+
+
+    █ Download:
+
+curl https://linedump.com/{path}
+
+wget -O- https://linedump.com/{path}
+
+Invoke-RestMethod -Uri "https://linedump.com/{path}"
+
+
+
+██ Encryption Examples with curl ██
+
+
+    █ Upload text:
+
+echo 'Cheers'   | openssl enc -aes-256-cbc -pbkdf2 -base64 -pass pass:yourkey   | curl -X POST -d @- https://linedump.com/
+
+
+    █ Upload file:
+
+openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < YOURFILE.txt   | curl -sS -X POST https://linedump.com --data-binary @-
+
+
+    █ Upload command output:
+
+ip -br a   | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64   | curl -sS -X POST https://linedump.com --data-binary @-
+
+
+    █ Download:
+
+curl -s https://linedump.com/PASTE_THE_ID   | base64 -d   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
+
+
+
+██ Adv Examples  ██
+
+
+    █ Multiple commands:
+
+{ cmd() { printf "\n# %s\n" "$*"; "$@"; }; \
+    cmd hostname; \
+    cmd ip -br a; \
+    } 2>&1 | curl -X POST https://linedump.com --data-binary @-
+
+
+    █ Continous command:
+
+(timeout --signal=INT --kill-after=5s 10s \
+    ping 127.1; \
+    echo "--- Terminated ---") | \
+    curl -X POST --data-binary @- https://linedump.com
+```
 
 ---
 
