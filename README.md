@@ -115,7 +115,7 @@ Use with reverse-proxy and HTTPS!
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `DOMAIN` | Domain name used in the application responses and examples | `linedump.com` | No |
+| `BASEURL` | Base URL used in the application responses and examples | `http://127.0.0.1:8000` | No |
 | `DESCRIPTION` | Application description displayed in the root endpoint | `CLI-only pastebin powered by linedump.com` | No |
 | `MAX_FILE_SIZE_MB` | Maximum file size limit in megabytes | `50` | No |
 | `RATE_LIMIT` | Rate limit for uploads (format: "requests/timeframe") | `50/hour` | No |

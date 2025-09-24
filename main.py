@@ -12,7 +12,7 @@ import hashlib
 from typing import Optional
 
 
-DOMAIN = os.getenv('DOMAIN', 'linedump.com')
+BASEURL = os.getenv('BASEURL', 'http://127.0.0.1:8000')
 DESCRIPTION = os.getenv('DESCRIPTION', 'CLI-only pastebin powered by linedump.com')
 MAX_FILE_SIZE_MB = int(os.getenv('MAX_FILE_SIZE_MB', '50'))
 RATE_LIMIT = os.getenv('RATE_LIMIT', '50/hour')
@@ -81,8 +81,7 @@ async def upload_text(request: Request):
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
 
-        base_url = f"https://{request.headers.get('host', request.url.netloc)}"
-        return f"{base_url}/{random_path}\n"
+        return f"{BASEURL}/{random_path}\n"
     
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to save file")
@@ -106,7 +105,7 @@ async def get_file(file_path: str):
 
 @app.get("/", response_class=PlainTextResponse)
 async def root():
-    return f"""LD {DOMAIN}
+    return f"""LD {BASEURL}
 
  ████ General ████
 
@@ -123,32 +122,32 @@ async def root():
 
     █ Upload curl:
 
-curl -X POST -d "Cheers" https://{DOMAIN}/                  # string
-curl -X POST https://{DOMAIN} --data-binary @- < file.txt   # file
-ip -br a | curl -X POST https://{DOMAIN} --data-binary @-   # command output
+curl -X POST -d "Cheers" {BASEURL}/                  # string
+curl -X POST {BASEURL} --data-binary @- < file.txt   # file
+ip -br a | curl -X POST {BASEURL} --data-binary @-   # command output
 
 
     █ Upload wget:
 
-echo "Cheers" | wget --post-data=@- -O- https://{DOMAIN}/   # string
-wget --post-file=file.txt -O- https://{DOMAIN}/             # file
-ip -br a | wget --post-data=@- -O- https://{DOMAIN}/        # command output
+echo "Cheers" | wget --post-data=@- -O- {BASEURL}/   # string
+wget --post-file=file.txt -O- {BASEURL}/             # file
+ip -br a | wget --post-data=@- -O- {BASEURL}/        # command output
 
 
     █ Upload Powershell:
 
-Invoke-RestMethod -Uri "https://{DOMAIN}/" -Method Post -Body "Cheers"               # string
-Invoke-RestMethod -Uri "https://{DOMAIN}/" -Method Post -InFile "file.txt"           # file
-ipconfig | Invoke-RestMethod -Uri "https://{DOMAIN}/" -Method Post -Body {{ $_ }}      # command output
+Invoke-RestMethod -Uri "{BASEURL}/" -Method Post -Body "Cheers"               # string
+Invoke-RestMethod -Uri "{BASEURL}/" -Method Post -InFile "file.txt"           # file
+ipconfig | Invoke-RestMethod -Uri "{BASEURL}/" -Method Post -Body {{ $_ }}      # command output
 
 
     █ Download:
 
-curl https://{DOMAIN}/{{path}}
+curl {BASEURL}/{{path}}
 
-wget -O- https://{DOMAIN}/{{path}}
+wget -O- {BASEURL}/{{path}}
 
-Invoke-RestMethod -Uri "https://{DOMAIN}/{{path}}"
+Invoke-RestMethod -Uri "{BASEURL}/{{path}}"
 
 
 
@@ -159,25 +158,25 @@ Invoke-RestMethod -Uri "https://{DOMAIN}/{{path}}"
 
 echo 'Cheers' \
   | openssl enc -aes-256-cbc -pbkdf2 -salt -base64 -pass pass:yourkey \
-  | curl -X POST -d @- https://{DOMAIN}/
+  | curl -X POST -d @- {BASEURL}/
 
 
     █ Upload file:
 
 openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 < file.txt \
-  | curl -sS -X POST https://{DOMAIN} --data-binary @-
+  | curl -sS -X POST {BASEURL} --data-binary @-
 
 
     █ Upload command output:
 
 ip -br a \
   | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64 \
-  | curl -sS -X POST https://{DOMAIN} --data-binary @-
+  | curl -sS -X POST {BASEURL} --data-binary @-
 
 
     █ Download:
 
-curl -s https://{DOMAIN}/{path} \
+curl -s {BASEURL}/{{path}} \
   | base64 -d \
   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
 
@@ -191,7 +190,7 @@ curl -s https://{DOMAIN}/{path} \
 {{ cmd() {{ printf "\\n# %s\\n" "$*"; "$@"; }}; \\
     cmd hostname; \\
     cmd ip -br a; \\
-    }} 2>&1 | curl -X POST https://{DOMAIN} --data-binary @-
+    }} 2>&1 | curl -X POST {BASEURL} --data-binary @-
 
 
     █ Continous command:
@@ -199,7 +198,7 @@ curl -s https://{DOMAIN}/{path} \
 (timeout --signal=INT --kill-after=5s 10s \\
     ping 127.1; \\
     echo "--- Terminated ---") | \\
-    curl -X POST --data-binary @- https://{DOMAIN}
+    curl -X POST --data-binary @- {BASEURL}
 
 
 
