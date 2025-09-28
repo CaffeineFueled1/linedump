@@ -2,6 +2,9 @@
 
 **CLI-only text pastebin service.**
 
+[Issue tracker](https://git.uphillsecurity.com/cf7/linedump/issues) | `Libera Chat #linedump`
+
+
 - Status: Beta - expect minor changes
 - Instance: [linedump.com](https://linedump.com/)
 - Inspired by:
@@ -126,6 +129,12 @@ Use with reverse-proxy and HTTPS!
 ## Security
 
 For security concerns or reports, please contact via `hello a t uphillsecurity d o t com` [gpg](https://uphillsecurity.com/gpg).
+
+---
+
+## Notes
+
+- [Github Mirror available](https://github.com/CaffeineFueled1/linedump)
 
 ---
 
