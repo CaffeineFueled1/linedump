@@ -143,11 +143,14 @@ ipconfig | Invoke-RestMethod -Uri "{BASEURL}/" -Method Post -Body {{ $_ }}      
 
     █ Download:
 
-curl {BASEURL}/{{path}}
+curl {BASEURL}/{{path}}                                    # print to stdout
+curl -o filename.txt {BASEURL}/{{path}}                    # save to file
 
-wget -O- {BASEURL}/{{path}}
+wget -O- {BASEURL}/{{path}}                                # print to stdout
+wget -O filename.txt {BASEURL}/{{path}}                    # save to file
 
-Invoke-RestMethod -Uri "{BASEURL}/{{path}}"
+Invoke-RestMethod -Uri "{BASEURL}/{{path}}"                                   # print to stdout
+Invoke-RestMethod -Uri "{BASEURL}/{{path}}" -OutFile "filename.txt"           # save to file
 
 
 

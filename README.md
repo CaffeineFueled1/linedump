@@ -56,11 +56,14 @@ ipconfig | Invoke-RestMethod -Uri "https://linedump.com/" -Method Post -Body { $
 
     █ Download:
 
-curl https://linedump.com/{path}
+curl https://linedump.com/{path}                                    # print to stdout
+curl -o filename.txt https://linedump.com/{path}                    # save to file
 
-wget -O- https://linedump.com/{path}
+wget -O- https://linedump.com/{path}                                # print to stdout
+wget -O filename.txt https://linedump.com/{path}                    # save to file
 
-Invoke-RestMethod -Uri "https://linedump.com/{path}"
+Invoke-RestMethod -Uri "https://linedump.com/{path}"                                   # print to stdout
+Invoke-RestMethod -Uri "https://linedump.com/{path}" -OutFile "filename.txt"           # save to file
 
 
 
