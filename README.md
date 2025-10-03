@@ -135,6 +135,7 @@ For security concerns or reports, please contact via `hello a t uphillsecurity d
 ## Notes
 
 - [Github Mirror available](https://github.com/CaffeineFueled1/linedump)
+- [Rate Limit Testing Script](https://git.uphillsecurity.com/cf7/Snippets/wiki/bash-linedump-ratelimit-test.-)
 
 ---
 
