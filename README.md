@@ -4,7 +4,6 @@
 
 [Issue tracker](https://git.uphillsecurity.com/cf7/linedump/issues) | `Libera Chat #linedump`
 
-
 - Status: Beta - expect minor changes
 - Instance: [linedump.com](https://linedump.com/)
 - Inspired by:
@@ -112,9 +111,32 @@ curl -s https://linedump.com/{path}   | base64 -d   | openssl enc -d -aes-256-cb
 
 ## Installation
 
-Use with reverse-proxy and HTTPS!
+**Use with reverse-proxy and HTTPS!**
 
-### Environment Variables
+### Docker
+
+**Simple / Testing**
+
+`docker run -d -p 127.0.0.1:8000:8000 -v /path/to/upload:/app/upload git.uphillsecurity.com/cf7/linedump:latest`
+
+Open `http://127.0.0.1:8000`
+
+**More advanced example with Podman**
+
+```bash
+podman run --replace -d --restart=unless-stopped \
+    --name linedump \
+    -e BASEURL="https://linedump.com" \
+    --userns=keep-id \
+    --read-only \
+    --cap-drop=ALL \
+    --security-opt no-new-privileges:true \
+    -p 127.0.0.1:8000:8000 \
+    -v linedump:/app/uploads \
+    git.uphillsecurity.com/cf7/linedump:latest
+```
+
+### Configuration
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
