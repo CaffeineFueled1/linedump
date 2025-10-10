@@ -20,6 +20,7 @@
 - save and share content via CLI
 - up- and download in CLI possible
 - rate-limits
+- optional auth token for paste creation
 
 **Ideas**:
 - integrated retention/purge function
@@ -91,6 +92,24 @@ curl -s https://linedump.com/{path}   | base64 -d   | openssl enc -d -aes-256-cb
 
 
 
+██ Authentication Examples ██
+
+If the instance has authentication enabled, include Bearer token:
+
+    █ curl:
+
+curl -H "Authorization: Bearer YOUR_TOKEN" -X POST -d "Cheers" https://linedump.com/
+
+    █ wget:
+
+wget --header="Authorization: Bearer YOUR_TOKEN" --post-data="Cheers" -O- https://linedump.com/
+
+    █ Powershell:
+
+Invoke-RestMethod -Uri "https://linedump.com/" -Headers @{"Authorization"="Bearer YOUR_TOKEN"} -Method Post -Body "Cheers"
+
+
+
 ██ Adv Examples  ██
 
 
@@ -148,6 +167,9 @@ podman run --replace -d --restart=unless-stopped \
 | `MAX_FILE_SIZE_MB` | Maximum file size limit in megabytes | `50` | No |
 | `RATE_LIMIT` | Rate limit for uploads (format: "requests/timeframe") | `50/hour` | No |
 | `URL_PATH_LENGTH` | Length of generated URL paths (number of characters) | `6` | No |
+| `UPLOAD_TOKENS` | Comma-separated list of Bearer tokens for upload authentication (if set, uploads require valid token) | _(disabled)_ | No |
+
+Create a secure token with: `openssl rand -base64 32`.
 
 ---
 
