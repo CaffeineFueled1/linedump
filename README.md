@@ -68,6 +68,11 @@ Invoke-RestMethod -Uri "https://linedump.com/{path}"                            
 Invoke-RestMethod -Uri "https://linedump.com/{path}" -OutFile "filename.txt"           # save to file
 
 
+    █ Delete:
+
+curl -X POST "https://linedump.com/{path}?token={deletion_token}"  # delete paste
+
+
 
 ██ Encryption Examples with curl ██
 
