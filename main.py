@@ -112,9 +112,32 @@ def generate_deletion_token() -> str:
     return secrets.token_urlsafe(32)
 
 
+def validate_paste_id(paste_id: str) -> bool:
+    """Validate paste ID to prevent path traversal and other attacks"""
+    # Must be alphanumeric only
+    if not paste_id.isalnum():
+        return False
+    # Reasonable length check (prevent extremely long IDs)
+    if len(paste_id) > 64:
+        return False
+    # Must not be empty
+    if len(paste_id) == 0:
+        return False
+    return True
+
+
 def save_metadata(paste_id: str, deletion_token: str, client_ip: str) -> None:
     """Save paste metadata to JSON file"""
+    # Validate paste_id before file operations
+    if not validate_paste_id(paste_id):
+        raise ValueError("Invalid paste ID")
+
     meta_path = UPLOAD_DIR / f"{paste_id}.meta"
+
+    # Ensure resolved path is within UPLOAD_DIR (prevent path traversal)
+    if not str(meta_path.resolve()).startswith(str(UPLOAD_DIR.resolve())):
+        raise ValueError("Invalid paste ID: path traversal detected")
+
     metadata = {
         "deletion_token": deletion_token,
         "created_at": datetime.utcnow().isoformat() + "Z",
@@ -126,7 +149,16 @@ def save_metadata(paste_id: str, deletion_token: str, client_ip: str) -> None:
 
 def load_metadata(paste_id: str) -> Optional[dict]:
     """Load paste metadata from JSON file"""
+    # Validate paste_id before file operations
+    if not validate_paste_id(paste_id):
+        return None
+
     meta_path = UPLOAD_DIR / f"{paste_id}.meta"
+
+    # Ensure resolved path is within UPLOAD_DIR (prevent path traversal)
+    if not str(meta_path.resolve()).startswith(str(UPLOAD_DIR.resolve())):
+        return None
+
     if not meta_path.exists():
         return None
     try:
@@ -138,8 +170,18 @@ def load_metadata(paste_id: str) -> Optional[dict]:
 
 def delete_paste(paste_id: str) -> bool:
     """Delete paste and its metadata"""
+    # Validate paste_id before file operations
+    if not validate_paste_id(paste_id):
+        return False
+
     paste_path = UPLOAD_DIR / paste_id
     meta_path = UPLOAD_DIR / f"{paste_id}.meta"
+
+    # Ensure resolved paths are within UPLOAD_DIR (prevent path traversal)
+    if not str(paste_path.resolve()).startswith(str(UPLOAD_DIR.resolve())):
+        return False
+    if not str(meta_path.resolve()).startswith(str(UPLOAD_DIR.resolve())):
+        return False
 
     deleted = False
     if paste_path.exists():
@@ -301,7 +343,16 @@ async def delete_paste_endpoint(paste_id: str, request: Request, token: Optional
             client_ip=client_ip,
             user_agent=user_agent,
             reason="missing_token")
-        raise HTTPException(status_code=400, detail="Deletion token required")
+        raise HTTPException(status_code=404, detail="Not found")
+
+    # Validate token length (prevent abuse with extremely long tokens)
+    if len(deletion_token) > 128:
+        log("WARNING", "deletion_failed",
+            paste_id=paste_id,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            reason="invalid_token_length")
+        raise HTTPException(status_code=403, detail="Deletion failed")
 
     # Load metadata
     metadata = load_metadata(paste_id)
@@ -311,7 +362,7 @@ async def delete_paste_endpoint(paste_id: str, request: Request, token: Optional
             client_ip=client_ip,
             user_agent=user_agent,
             reason="metadata_not_found")
-        raise HTTPException(status_code=404, detail="Paste not found")
+        raise HTTPException(status_code=404, detail="Deletion failed")
 
     # Verify deletion token using constant-time comparison
     if not secrets.compare_digest(deletion_token, metadata.get("deletion_token", "")):
@@ -320,7 +371,7 @@ async def delete_paste_endpoint(paste_id: str, request: Request, token: Optional
             client_ip=client_ip,
             user_agent=user_agent,
             reason="invalid_token")
-        raise HTTPException(status_code=403, detail="Invalid deletion token")
+        raise HTTPException(status_code=403, detail="Deletion failed")
 
     # Delete the paste and metadata
     if delete_paste(paste_id):
