@@ -134,7 +134,8 @@ Invoke-RestMethod -Uri "https://linedump.com/" -Headers @{"Authorization"="Beare
 
 ## Installation
 
-**Use with reverse-proxy and HTTPS!**
+> [!IMPORTANT]
+> **Production Deployment:** Use a reverse-proxy (nginx, caddy) with TLS/HTTPS! Rate-limiting and logging features require the `X-Real-IP` header from a reverse proxy to function correctly. Less critical for local or trusted environments.
 
 ### Docker
 
