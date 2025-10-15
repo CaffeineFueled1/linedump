@@ -21,6 +21,7 @@
 - up- and download in CLI possible
 - rate-limits
 - optional auth token for paste creation
+- logging
 
 **Ideas**:
 - integrated retention/purge function
@@ -168,6 +169,8 @@ podman run --replace -d --restart=unless-stopped \
 | `RATE_LIMIT` | Rate limit for uploads (format: "requests/timeframe") | `50/hour` | No |
 | `URL_PATH_LENGTH` | Length of generated URL paths (number of characters) | `6` | No |
 | `UPLOAD_TOKENS` | Comma-separated list of Bearer tokens for upload authentication (if set, uploads require valid token) | _(disabled)_ | No |
+| `LOGGING_ENABLED` | Enable structured JSON logging to file and stdout | `false` | No |
+| `LOG_LEVEL` | Logging level (INFO, WARNING, ERROR) | `INFO` | No |
 
 Create a secure token with: `openssl rand -base64 32`.
 
