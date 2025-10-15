@@ -107,6 +107,50 @@ def generate_random_path(length: int = None) -> str:
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 
+def generate_deletion_token() -> str:
+    """Generate a secure deletion token"""
+    return secrets.token_urlsafe(32)
+
+
+def save_metadata(paste_id: str, deletion_token: str, client_ip: str) -> None:
+    """Save paste metadata to JSON file"""
+    meta_path = UPLOAD_DIR / f"{paste_id}.meta"
+    metadata = {
+        "deletion_token": deletion_token,
+        "created_at": datetime.utcnow().isoformat() + "Z",
+        "client_ip": client_ip
+    }
+    with open(meta_path, 'w') as f:
+        json.dump(metadata, f)
+
+
+def load_metadata(paste_id: str) -> Optional[dict]:
+    """Load paste metadata from JSON file"""
+    meta_path = UPLOAD_DIR / f"{paste_id}.meta"
+    if not meta_path.exists():
+        return None
+    try:
+        with open(meta_path, 'r') as f:
+            return json.load(f)
+    except:
+        return None
+
+
+def delete_paste(paste_id: str) -> bool:
+    """Delete paste and its metadata"""
+    paste_path = UPLOAD_DIR / paste_id
+    meta_path = UPLOAD_DIR / f"{paste_id}.meta"
+
+    deleted = False
+    if paste_path.exists():
+        paste_path.unlink()
+        deleted = True
+    if meta_path.exists():
+        meta_path.unlink()
+
+    return deleted
+
+
 def validate_upload_token(request: Request) -> bool:
     """Validate upload token if authentication is enabled"""
     if not UPLOAD_TOKENS:
@@ -189,8 +233,15 @@ async def upload_text(request: Request, authorized: bool = Depends(validate_uplo
     file_path = UPLOAD_DIR / random_path
 
     try:
+        # Generate deletion token
+        deletion_token = generate_deletion_token()
+
+        # Save paste content
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
+
+        # Save metadata with deletion token
+        save_metadata(random_path, deletion_token, client_ip)
 
         log("INFO", "paste_created",
             paste_id=random_path,
@@ -198,7 +249,8 @@ async def upload_text(request: Request, authorized: bool = Depends(validate_uplo
             user_agent=user_agent,
             size_bytes=len(content))
 
-        return f"{BASEURL}/{random_path}\n"
+        # Return URL and deletion token
+        return f"{BASEURL}/{random_path}\nDelete: {BASEURL}/{random_path}?token={deletion_token}\n"
 
     except Exception as e:
         log("ERROR", "upload_failed",
@@ -208,15 +260,16 @@ async def upload_text(request: Request, authorized: bool = Depends(validate_uplo
             error=str(e))
         raise HTTPException(status_code=500, detail="Failed to save file")
 
-@app.get("/{file_path}", response_class=PlainTextResponse)
-async def get_file(file_path: str, request: Request):
-    if not file_path.isalnum():
-        raise HTTPException(status_code=404, detail="File not found")
+@app.get("/{paste_id}", response_class=PlainTextResponse)
+async def get_file(paste_id: str, request: Request, token: Optional[str] = None):
+    """Get paste content or delete if token is provided"""
+    if not paste_id.isalnum():
+        raise HTTPException(status_code=404, detail="Paste not found")
 
-    file_location = UPLOAD_DIR / file_path
+    file_location = UPLOAD_DIR / paste_id
 
     if not file_location.exists() or not file_location.is_file():
-        raise HTTPException(status_code=404, detail="File not found")
+        raise HTTPException(status_code=404, detail="Paste not found")
 
     try:
         with open(file_location, 'r', encoding='utf-8') as f:
@@ -225,9 +278,66 @@ async def get_file(file_path: str, request: Request):
         return content
     except Exception as e:
         log("ERROR", "download_failed",
-            paste_id=file_path,
+            paste_id=paste_id,
             error=str(e))
         raise HTTPException(status_code=500, detail="Failed to read file")
+
+
+@app.post("/{paste_id}", response_class=PlainTextResponse)
+async def delete_paste_endpoint(paste_id: str, request: Request, token: Optional[str] = None):
+    """Delete a paste using its deletion token"""
+    client_ip = get_real_ip(request)
+    user_agent = request.headers.get("User-Agent", "unknown")
+
+    # Validate paste_id format
+    if not paste_id.isalnum():
+        raise HTTPException(status_code=404, detail="Paste not found")
+
+    # Check if token is provided (query param or header)
+    deletion_token = token or request.headers.get("X-Delete-Token")
+    if not deletion_token:
+        log("WARNING", "deletion_failed",
+            paste_id=paste_id,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            reason="missing_token")
+        raise HTTPException(status_code=400, detail="Deletion token required")
+
+    # Load metadata
+    metadata = load_metadata(paste_id)
+    if not metadata:
+        log("WARNING", "deletion_failed",
+            paste_id=paste_id,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            reason="metadata_not_found")
+        raise HTTPException(status_code=404, detail="Paste not found")
+
+    # Verify deletion token using constant-time comparison
+    if not secrets.compare_digest(deletion_token, metadata.get("deletion_token", "")):
+        log("WARNING", "deletion_failed",
+            paste_id=paste_id,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            reason="invalid_token")
+        raise HTTPException(status_code=403, detail="Invalid deletion token")
+
+    # Delete the paste and metadata
+    if delete_paste(paste_id):
+        log("INFO", "paste_deleted",
+            paste_id=paste_id,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            deletion_method="user_requested")
+        return "Paste deleted successfully\n"
+    else:
+        log("ERROR", "deletion_failed",
+            paste_id=paste_id,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            reason="file_not_found")
+        raise HTTPException(status_code=500, detail="Failed to delete paste")
+
 
 @app.get("/", response_class=PlainTextResponse)
 async def root():
