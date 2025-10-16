@@ -146,7 +146,7 @@ Invoke-RestMethod -Uri "https://linedump.com/" -Headers @{"Authorization"="Beare
 
 **Simple / Testing**
 
-`docker run -d -p 127.0.0.1:8000:8000 -v /path/to/upload:/app/upload git.uphillsecurity.com/cf7/linedump:latest`
+`docker run -d -p 127.0.0.1:8000:8000 -v /path/to/uploads:/app/uploads git.uphillsecurity.com/cf7/linedump:latest`
 
 Open `http://127.0.0.1:8000`
 
