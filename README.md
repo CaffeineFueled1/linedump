@@ -58,19 +58,19 @@ ipconfig | Invoke-RestMethod -Uri "https://linedump.com/" -Method Post -Body { $
 
     █ Download:
 
-curl https://linedump.com/{path}                                    # print to stdout
-curl -o filename.txt https://linedump.com/{path}                    # save to file
+curl https://linedump.com/{paste_id}                                    # print to stdout
+curl -o filename.txt https://linedump.com/{paste_id}                    # save to file
 
-wget -O- https://linedump.com/{path}                                # print to stdout
-wget -O filename.txt https://linedump.com/{path}                    # save to file
+wget -O- https://linedump.com/{paste_id}                                # print to stdout
+wget -O filename.txt https://linedump.com/{paste_id}                    # save to file
 
-Invoke-RestMethod -Uri "https://linedump.com/{path}"                                   # print to stdout
-Invoke-RestMethod -Uri "https://linedump.com/{path}" -OutFile "filename.txt"           # save to file
+Invoke-RestMethod -Uri "https://linedump.com/{paste_id}"                                   # print to stdout
+Invoke-RestMethod -Uri "https://linedump.com/{paste_id}" -OutFile "filename.txt"           # save to file
 
 
     █ Delete:
 
-curl -X POST "https://linedump.com/{path}?token={deletion_token}"  # delete paste
+curl -X POST "https://linedump.com/{paste_id}?token={deletion_token}"  # delete paste
 
 
 
@@ -94,7 +94,7 @@ ip -br a   | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:yourkey -base64  
 
     █ Download:
 
-curl -s https://linedump.com/{path}   | base64 -d   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
+curl -s https://linedump.com/{paste_id}   | base64 -d   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
 
 
 

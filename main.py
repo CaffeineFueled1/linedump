@@ -462,19 +462,19 @@ ipconfig | Invoke-RestMethod -Uri "{BASEURL}/"{auth_header_ps} -Method Post -Bod
 
     █ Download:
 
-curl {BASEURL}/{{path}}                                    # print to stdout
-curl -o filename.txt {BASEURL}/{{path}}                    # save to file
+curl {BASEURL}/{{paste_id}}                                    # print to stdout
+curl -o filename.txt {BASEURL}/{{paste_id}}                    # save to file
 
-wget -O- {BASEURL}/{{path}}                                # print to stdout
-wget -O filename.txt {BASEURL}/{{path}}                    # save to file
+wget -O- {BASEURL}/{{paste_id}}                                # print to stdout
+wget -O filename.txt {BASEURL}/{{paste_id}}                    # save to file
 
-Invoke-RestMethod -Uri "{BASEURL}/{{path}}"                                   # print to stdout
-Invoke-RestMethod -Uri "{BASEURL}/{{path}}" -OutFile "filename.txt"           # save to file
+Invoke-RestMethod -Uri "{BASEURL}/{{paste_id}}"                                   # print to stdout
+Invoke-RestMethod -Uri "{BASEURL}/{{paste_id}}" -OutFile "filename.txt"           # save to file
 
 
     █ Delete:
 
-curl -X POST "{BASEURL}/{{path}}?token={{deletion_token}}"  # delete paste
+curl -X POST "{BASEURL}/{{paste_id}}?token={{deletion_token}}"  # delete paste
 
 
 
@@ -503,7 +503,7 @@ ip -br a \
 
     █ Download:
 
-curl -s {BASEURL}/{{path}} \
+curl -s {BASEURL}/{{paste_id}} \
   | base64 -d \
   | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:yourkey
 
