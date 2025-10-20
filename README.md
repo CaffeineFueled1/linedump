@@ -135,6 +135,8 @@ Invoke-RestMethod -Uri "https://linedump.com/" -Headers @{"Authorization"="Beare
     curl -X POST --data-binary @- https://linedump.com
 ```
 
+[For more examples check out the Wiki.](https://git.uphillsecurity.com/cf7/linedump/wiki/Usage)
+
 ---
 
 ## Installation
@@ -192,6 +194,7 @@ For security concerns or reports, please contact via `hello a t uphillsecurity d
 
 - [Github Mirror available](https://github.com/CaffeineFueled1/linedump)
 - [Rate Limit Testing Script](https://git.uphillsecurity.com/cf7/Snippets/wiki/bash-linedump-ratelimit-test.-)
+- [Linedumpe Wiki](https://git.uphillsecurity.com/cf7/linedump/wiki/?action=_pages)
 
 ---
 
