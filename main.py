@@ -292,7 +292,7 @@ async def upload_text(request: Request, authorized: bool = Depends(validate_uplo
             size_bytes=len(content))
 
         # Return URL and deletion token
-        return f"{BASEURL}/{random_path}\nDelete with HTTP POST: {BASEURL}/{random_path}?token={deletion_token}\n"
+        return f"{BASEURL}/{random_path}\nDelete with HTTP POST:\n{BASEURL}/{random_path}?token={deletion_token}\n"
 
     except Exception as e:
         log("ERROR", "upload_failed",
