@@ -172,7 +172,7 @@ podman run --replace -d --restart=unless-stopped \
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | `BASEURL` | Base URL used in the application responses and examples | `http://127.0.0.1:8000` | No |
-| `DESCRIPTION` | Application description displayed in the root endpoint | `CLI-only pastebin powered by linedump.com` | No |
+| `DESCRIPTION` | Application description displayed in the root endpoint (supports `\n` for multiline) | `CLI-only pastebin powered by linedump.com\nOpen Source: https://git.uphillsecurity.com/cf7/linedump` | No |
 | `MAX_FILE_SIZE_MB` | Maximum file size limit in megabytes | `50` | No |
 | `RATE_LIMIT` | Rate limit for uploads (format: "requests/timeframe") | `50/hour` | No |
 | `URL_PATH_LENGTH` | Length of generated URL paths (number of characters) | `6` | No |

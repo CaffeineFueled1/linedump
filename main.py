@@ -16,7 +16,7 @@ import sys
 
 
 BASEURL = os.getenv('BASEURL', 'http://127.0.0.1:8000')
-DESCRIPTION = os.getenv('DESCRIPTION', 'CLI-only pastebin powered by linedump.com')
+DESCRIPTION = os.getenv('DESCRIPTION', 'CLI-only pastebin powered by linedump.com\nOpen Source: https://git.uphillsecurity.com/cf7/linedump').replace('\\n', '\n')
 MAX_FILE_SIZE_MB = int(os.getenv('MAX_FILE_SIZE_MB', '50'))
 RATE_LIMIT = os.getenv('RATE_LIMIT', '50/hour')
 URL_PATH_LENGTH = int(os.getenv('URL_PATH_LENGTH', '6'))
